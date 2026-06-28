@@ -24,4 +24,20 @@ public class EmployeesController : ControllerBase
         
         return Ok(employees);
     }
+    [HttpPut("{employeeId}/tasks/{taskId}/toggle")]
+    public async Task<IActionResult> ToggleTaskStatus(int employeeId, int taskId)
+    {
+        var task = await _context.OnboardingTasks
+            .FirstOrDefaultAsync(t => t.Id == taskId && t.EmployeeId == employeeId);
+
+        if (task == null)
+        {
+            return NotFound(new { message = "Task not found." });
+        }
+        task.IsCompleted = !task.IsCompleted;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(task);
+    }
 }
