@@ -1,32 +1,26 @@
-# React + TypeScript + Vite
+# Meridian Onboarding System
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A backend API application created to facilitate the onboarding process for new employees at Meridian. The project provides a solid structure for managing employees and onboarding tasks.
 
-Currently, two official plugins are available:
+## 🛠 Technologies
+* **Backend:** ASP.NET Core 8.0, SQLite, Entity Framework Core
+* **Frontend:** React, TypeScript, Vite, Tailwind CSS
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Running the project
 
-## React Compiler
+1. **Backend:**
+   - Open terminal in `backend` folder.
+   - Run: `dotnet run`
+   - API available at: `http://localhost:5102/api/employees`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+2. **Frontend:**
+   - Open terminal in `frontend` (or project root) folder.
+   - Install: `npm install`
+   - Run: `npm run dev`
+   - Open: `http://localhost:5173`
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## 📚 Additional Documentation
+- [ASSUMPTIONS.md](ASSUMPTIONS.md)
+- [DECISIONS.md](DECISIONS.md)
+- [WHAT_I_WOULD_DO_NEXT.md](WHAT_I_WOULD_DO_NEXT.md)
+- [REFLECTION.md](REFLECTION.md)

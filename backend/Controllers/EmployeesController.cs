@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using backend.Data;
+using backend.Models;
 
 namespace backend.Controllers;
 
@@ -39,5 +40,19 @@ public class EmployeesController : ControllerBase
         await _context.SaveChangesAsync();
 
         return Ok(task);
+    }
+    [HttpPost]
+    public async Task<ActionResult> CreateEmployee([FromBody] Employee newEmployee)
+    {
+        newEmployee.OnboardingTasks = new List<OnboardingTask>
+        {
+            new OnboardingTask { Title = "Set up Slack account", Description = "Join the #general and your department's channel.", IsCompleted = false },
+            new OnboardingTask { Title = "IT Setup", Description = "Log into your company email and verify access.", IsCompleted = false },
+            new OnboardingTask { Title = "Meet your Buddy", Description = "Schedule a 15-minute Google Meet with your assigned onboarding buddy.", IsCompleted = false }
+        };
+
+        _context.Employees.Add(newEmployee);
+        await _context.SaveChangesAsync();
+        return Ok(newEmployee);
     }
 }
