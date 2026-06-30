@@ -7,9 +7,11 @@ export interface OnboardingTask {
 }
 
 export interface Employee {
-    id: number;
-    fullName: string;
-    role: string;
-    department: string;
-    onboardingTasks: OnboardingTask[];
+  id: number;
+  fullName: string;
+  role: string;
+  department: string;
+  onsiteDays?: string;
+  assignedBuddy?: string;
+  onboardingTasks: OnboardingTask[];
 }

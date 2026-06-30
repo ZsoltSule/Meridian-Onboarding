@@ -5,6 +5,8 @@ import { Header } from './components/Header';
 import { EmployeeCard } from './components/EmployeeCard';
 import { RoleSelector } from './components/RoleSelector';
 import { AddEmployeeForm } from './components/AddEmployeeForm';
+import { TeamSchedule } from './components/TeamSchedule';
+import { CompanyCalendar } from './components/CompanyCalendar'; 
 
 const API_BASE_URL = 'http://localhost:5102/api/employees';
 
@@ -21,6 +23,11 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   }, [darkMode]);
 
   useEffect(() => {
@@ -60,9 +67,6 @@ function App() {
       alert("An error occurred while saving the task status.");
     }
   };
-  const handleAddEmployee = (newEmployee: Employee) => {
-    setEmployees(prev => [...prev, newEmployee]);
-  };
 
   if (loading) return <div className={`p-10 text-center font-medium ${darkMode ? 'text-gray-400 bg-gray-900' : 'text-gray-600 bg-gray-50'} min-h-screen`}>Loading Meridian Application...</div>;
   if (error) return <div className="p-10 text-center font-medium text-red-500">{error}</div>;
@@ -73,7 +77,7 @@ function App() {
 
   return (
     <div className={`min-h-screen transition-colors duration-200 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <div className="max-w-3xl mx-auto p-6 font-sans antialiased">
+      <div className="max-w-4xl mx-auto p-6 font-sans antialiased"> {/* Am mărit max-w-3xl la max-w-4xl pentru a lăsa loc calendarului */}
         <Header darkMode={darkMode} toggleTheme={() => setDarkMode(!darkMode)} />
         
         <RoleSelector 
@@ -84,18 +88,26 @@ function App() {
         />
 
         <main className="space-y-6">
+          {currentUser !== 'HR' && visibleEmployees.length > 0 && (
+            <>
+              <TeamSchedule employee={visibleEmployees[0]} darkMode={darkMode} />
+              <CompanyCalendar employees={employees} darkMode={darkMode} />
+            </>
+          )}
           {currentUser === 'HR' && (
             <>
               <div className={`mb-4 pb-2 border-b ${darkMode ? 'border-gray-700 text-gray-300' : 'border-gray-200 text-gray-600'}`}>
                 <h2 className="text-xl font-bold">HR Dashboard Overview</h2>
                 <p className="text-sm">Manage new hires and track their onboarding progress.</p>
               </div>
-              
-              {/* Formularul va fi vizibil doar pentru HR */}
-              <AddEmployeeForm onAdd={handleAddEmployee} darkMode={darkMode} />
+              <AddEmployeeForm onEmployeeAdded={fetchEmployees} darkMode={darkMode} />
+              <div className="mt-8">
+                <CompanyCalendar employees={employees} darkMode={darkMode} />
+              </div>
             </>
           )}
-
+          {currentUser === 'HR' && <h3 className={`text-md font-bold mt-6 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Active Onboarding Tracks</h3>}
+          
           {visibleEmployees.length === 0 ? (
             <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'} italic`}>No employees found.</p>
           ) : (
