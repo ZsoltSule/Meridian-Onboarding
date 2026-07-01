@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from 'axios'; 
 import { type Employee } from './types';
 import { Header } from './components/Header';
 import { EmployeeCard } from './components/EmployeeCard';
@@ -15,6 +15,7 @@ function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<string | number>('HR');
+  const [hrSelectedEmployeeId, setHrSelectedEmployeeId] = useState<number | 'NONE'>('NONE');
   
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem('theme');
@@ -65,19 +66,18 @@ function App() {
     } catch (err) {
       console.error("Error updating task:", err);
       alert("An error occurred while saving the task status.");
+      throw err;
     }
   };
 
   if (loading) return <div className={`p-10 text-center font-medium ${darkMode ? 'text-gray-400 bg-gray-900' : 'text-gray-600 bg-gray-50'} min-h-screen`}>Loading Meridian Application...</div>;
   if (error) return <div className="p-10 text-center font-medium text-red-500">{error}</div>;
-
   const visibleEmployees = currentUser === 'HR' 
-    ? employees 
+    ? (hrSelectedEmployeeId === 'NONE' ? [] : employees.filter(emp => emp.id === hrSelectedEmployeeId))
     : employees.filter(emp => emp.id === currentUser);
-
   return (
     <div className={`min-h-screen transition-colors duration-200 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <div className="max-w-4xl mx-auto p-6 font-sans antialiased"> {/* Am mărit max-w-3xl la max-w-4xl pentru a lăsa loc calendarului */}
+      <div className="max-w-4xl mx-auto p-6 font-sans antialiased"> 
         <Header darkMode={darkMode} toggleTheme={() => setDarkMode(!darkMode)} />
         
         <RoleSelector 
@@ -85,6 +85,8 @@ function App() {
           currentUser={currentUser} 
           onUserChange={setCurrentUser} 
           darkMode={darkMode} 
+          hrSelectedEmployeeId={hrSelectedEmployeeId}
+          onHrSelectedEmployeeChange={setHrSelectedEmployeeId}
         />
 
         <main className="space-y-6">
@@ -94,6 +96,7 @@ function App() {
               <CompanyCalendar employees={employees} darkMode={darkMode} />
             </>
           )}
+          
           {currentUser === 'HR' && (
             <>
               <div className={`mb-4 pb-2 border-b ${darkMode ? 'border-gray-700 text-gray-300' : 'border-gray-200 text-gray-600'}`}>
@@ -106,16 +109,24 @@ function App() {
               </div>
             </>
           )}
+          
           {currentUser === 'HR' && <h3 className={`text-md font-bold mt-6 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Active Onboarding Tracks</h3>}
           
           {visibleEmployees.length === 0 ? (
-            <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'} italic`}>No employees found.</p>
+            currentUser === 'HR' && hrSelectedEmployeeId === 'NONE' ? (
+              <div className={`p-6 text-center border-2 border-dashed rounded-xl ${darkMode ? 'border-gray-700 text-gray-400 bg-gray-800/20' : 'border-gray-200 text-gray-500 bg-gray-50'}`}>
+                💡 <span className="font-medium">Please select an employee from the dropdown above to inspect their onboarding progress.</span>
+              </div>
+            ) : (
+              <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'} italic`}>No employees found.</p>
+            )
           ) : (
             visibleEmployees.map(employee => (
               <EmployeeCard 
                 key={employee.id} 
                 employee={employee} 
                 darkMode={darkMode} 
+                currentUser={currentUser} 
                 onToggleTask={handleToggleTask} 
               />
             ))
